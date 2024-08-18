@@ -11,16 +11,19 @@ import {
   Box,
   Button
 } from '@mui/material';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeFromCart, increaseQuantity, decreaseQuantity } from '../redux/cartSlice';
+import { useMediaQuery, useTheme } from '@mui/material';
 
 const CartPage = () => {
   const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const theme = useTheme();
+  const isBelowTablet = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleRemove = (id) => {
     dispatch(removeFromCart(id));
@@ -68,50 +71,71 @@ const CartPage = () => {
                   style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: '4px' }}
                 />
               </Box>
-              <ListItemText
-                primary={item.name}
-                secondary={
-                  <React.Fragment>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="text.primary"
-                      sx={{ textDecoration: 'line-through', mr: 1 }}
-                    >
-                      ₹{(item.price * item.quantity).toLocaleString('en-IN')}
-                    </Typography>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="primary"
-                    >
-                      ₹{(item.discountedPrice * item.quantity).toLocaleString('en-IN')}
-                    </Typography>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="success.main"
-                      sx={{ ml: 1 }}
-                    >
-                      ({calculateDiscount(item.price, item.discountedPrice)}% off)
-                    </Typography>
-                  </React.Fragment>
-                }
-              />
-              <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-                <IconButton onClick={() => handleDecrease(item.id)} size="small">
-                  <RemoveIcon />
-                </IconButton>
-                <Typography sx={{ mx: 1 }}>{item.quantity}</Typography>
-                <IconButton onClick={() => handleIncrease(item.id)} size="small">
-                  <AddIcon />
-                </IconButton>
+              <Box sx={{ flex: 1 }}>
+                <ListItemText
+                  primary={item.name}
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                        sx={{ textDecoration: 'line-through', mr: 1 }}
+                      >
+                        ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                      </Typography>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="primary"
+                      >
+                        ₹{(item.discountedPrice * item.quantity).toLocaleString('en-IN')}
+                      </Typography>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="success.main"
+                        sx={{ ml: 1 }}
+                      >
+                        ({calculateDiscount(item.price, item.discountedPrice)}% off)
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+                {isBelowTablet ? (
+                  // Controls below item info for small screens
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', mt: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <IconButton onClick={() => handleDecrease(item.id)} size="small">
+                        <RemoveIcon />
+                      </IconButton>
+                      <Typography sx={{ mx: 1 }}>{item.quantity}</Typography>
+                      <IconButton onClick={() => handleIncrease(item.id)} size="small">
+                        <AddIcon />
+                      </IconButton>
+                    </Box>
+                    <IconButton edge="end" aria-label="delete" onClick={() => handleRemove(item.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                ) : (
+                  // Controls inline for larger screens
+                  <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+                    <IconButton onClick={() => handleDecrease(item.id)} size="small">
+                      <RemoveIcon />
+                    </IconButton>
+                    <Typography sx={{ mx: 1 }}>{item.quantity}</Typography>
+                    <IconButton onClick={() => handleIncrease(item.id)} size="small">
+                      <AddIcon />
+                    </IconButton>
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end" aria-label="delete" onClick={() => handleRemove(item.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </Box>
+                )}
               </Box>
-              <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="delete" onClick={() => handleRemove(item.id)}>
-                  <DeleteIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
             </ListItem>
             <Divider />
           </React.Fragment>
