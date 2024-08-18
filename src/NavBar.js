@@ -1,17 +1,20 @@
 import React from 'react';
-import { AppBar, Toolbar, Button, Box, Badge , IconButton } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { AppBar, Toolbar, Button, Box, Badge, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
-const NavBar = ({ cartItemsCount }) => {
+const NavBar = () => {
+  const cartItemsCount = useSelector(state => state.cart.length);
+
   return (
     <AppBar position="static" color="transparent" elevation={2}>
       <Toolbar>
         <Box display="flex" justifyContent="space-between" width="100%">
           <Button
-            sx={{ 
-              color: '#000', 
-              fontWeight: 'bold', 
+            sx={{
+              color: '#000',
+              fontWeight: 'bold',
               fontSize: '18px',
               textTransform: 'none'
             }}
